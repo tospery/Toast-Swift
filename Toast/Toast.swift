@@ -314,7 +314,7 @@ public extension UIView {
         let activityView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: style.activitySize.width, height: style.activitySize.height))
         activityView.backgroundColor = style.activityBackgroundColor
         activityView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
-		activityView.layer.cornerRadius = style.activityCornerRadius
+		activityView.layer.cornerRadius = style.cornerRadius < 0 ? style.activitySize.height / 2.0 : style.cornerRadius
 
         
         if style.displayShadow {
@@ -336,7 +336,7 @@ public extension UIView {
     // MARK: - Private Show/Hide Methods
     
     private func showToast(_ toast: UIView, duration: TimeInterval, point: CGPoint) {
-		toast.center = .init(x: point.x, y: 0)
+        toast.center = .init(x: point.x, y: 0)
         toast.alpha = 0.0
         
         if ToastManager.shared.isTapToDismissEnabled {
@@ -350,7 +350,7 @@ public extension UIView {
         self.addSubview(toast)
         
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
-			toast.center = point
+            toast.center = point
             toast.alpha = 1.0
         }) { _ in
             let timer = Timer(timeInterval: duration, target: self, selector: #selector(UIView.toastTimerDidFinish(_:)), userInfo: toast, repeats: false)
@@ -365,7 +365,7 @@ public extension UIView {
         }
         
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
-			toast.center = .init(x: toast.center.x, y: 0)
+            toast.center = .init(x: toast.center.x, y: 0)
             toast.alpha = 0.0
         }) { _ in
             toast.removeFromSuperview()
@@ -527,7 +527,8 @@ public extension UIView {
         if let imageView = imageView {
             wrapperView.addSubview(imageView)
         }
-		wrapperView.layer.cornerRadius = style.cornerRadius < 0 ? wrapperHeight / 2.0 : style.cornerRadius
+        wrapperView.layer.cornerRadius = style.cornerRadius < 0 ? wrapperHeight / 2.0 : style.cornerRadius
+
         
         return wrapperView
     }
@@ -682,7 +683,8 @@ public struct ToastStyle {
      */
     public var fadeDuration: TimeInterval = 0.2
     
-	public var activityCornerRadius: CGFloat = 10.0;
+    public var activityCornerRadius: CGFloat = 10.0;
+    
     /**
      Activity indicator color. Default is `.white`.
      */
